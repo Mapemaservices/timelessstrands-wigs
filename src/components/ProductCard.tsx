@@ -48,8 +48,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const navigate = useNavigate();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [selectedLaceSize, setSelectedLaceSize] = useState('');
-  const [selectedInchSize, setSelectedInchSize] = useState('');
+  // Find first available lace size and inch size from variants
+  const firstVariant: ProductVariant | undefined = variants[0];
+  const [selectedLaceSize, setSelectedLaceSize] = useState(firstVariant?.laceSize || '');
+  const [selectedInchSize, setSelectedInchSize] = useState(firstVariant?.inchSize || '');
   
   const isWishlisted = isInWishlist(id);
 
@@ -62,10 +64,15 @@ const ProductCard: React.FC<ProductCardProps> = ({
     v => v.laceSize === selectedLaceSize && v.inchSize === selectedInchSize
   );
 
-  const currentPrice = selectedVariant?.price || (variants[0]?.price || 0);
-  const currentStock = selectedVariant?.stock || 0;
+  // Show only the price of the first or selected variant
+  const currentPrice = selectedVariant?.price ?? firstVariant?.price ?? 0;
+  const currentStock = (selectedLaceSize && selectedInchSize && selectedVariant)
+    ? selectedVariant.stock
+    : (firstVariant?.stock || 0);
 
-  const canAddToCart = selectedLaceSize && selectedInchSize && currentStock > 0;
+  const canAddToCart =
+    (variants.length === 1 && firstVariant?.stock > 0) ||
+    (selectedLaceSize && selectedInchSize && currentStock > 0);
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length);
@@ -111,16 +118,28 @@ const ProductCard: React.FC<ProductCardProps> = ({
   const handleAddToCart = () => {
     if (!canAddToCart) return;
 
-    const cartItem = {
-      id,
-      name,
-      image: images[0],
-      price: currentPrice,
-      laceSize: selectedLaceSize,
-      inchSize: selectedInchSize,
-      quantity: 1
-    };
-
+    let cartItem;
+    if (variants.length === 1 && firstVariant) {
+      cartItem = {
+        id,
+        name,
+        image: images[0],
+        price: firstVariant.price,
+        laceSize: firstVariant.laceSize,
+        inchSize: firstVariant.inchSize,
+        quantity: 1
+      };
+    } else {
+      cartItem = {
+        id,
+        name,
+        image: images[0],
+        price: currentPrice,
+        laceSize: selectedLaceSize,
+        inchSize: selectedInchSize,
+        quantity: 1
+      };
+    }
     onAddToCart(cartItem);
     toast.success(`Added ${name} to cart!`);
   };
@@ -294,13 +313,11 @@ const ProductCard: React.FC<ProductCardProps> = ({
           </span>
         </div>
 
-        {/* Size Selection */}
+        {/* Size & Variant Selection */}
         <div className="space-y-2">
           {/* Lace Size */}
           <div>
-            <label className="block text-sm font-semibold text-card-foreground mb-1">
-              Lace Size:
-            </label>
+            <label className="block text-sm font-semibold text-card-foreground mb-1">Lace Size:</label>
             <select
               value={selectedLaceSize}
               onChange={(e) => setSelectedLaceSize(e.target.value)}
@@ -315,9 +332,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
 
           {/* Inch Size */}
           <div>
-            <label className="block text-sm font-semibold text-card-foreground mb-1">
-              Length:
-            </label>
+            <label className="block text-sm font-semibold text-card-foreground mb-1">Length:</label>
             <select
               value={selectedInchSize}
               onChange={(e) => setSelectedInchSize(e.target.value)}
@@ -326,6 +341,75 @@ const ProductCard: React.FC<ProductCardProps> = ({
               <option value="">Select Length</option>
               {availableInchSizes.map(size => (
                 <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Density */}
+          <div>
+            <label className="block text-sm font-semibold text-card-foreground mb-1">Density:</label>
+            <select
+              value={selectedVariant?.density || ''}
+              onChange={(e) => {
+                // Find variant with selected density
+                const density = e.target.value;
+                const match = variants.find(v => v.density === density && v.laceSize === selectedLaceSize && v.inchSize === selectedInchSize);
+                if (match) {
+                  setSelectedLaceSize(match.laceSize);
+                  setSelectedInchSize(match.inchSize);
+                }
+              }}
+              className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:border-gold focus:ring-1 focus:ring-gold/20"
+            >
+              <option value="">Select Density</option>
+              {[...new Set(variants.map(v => v.density).filter(Boolean))].map(density => (
+                <option key={density} value={density}>{density}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Color */}
+          <div>
+            <label className="block text-sm font-semibold text-card-foreground mb-1">Color:</label>
+            <select
+              value={selectedVariant?.color || ''}
+              onChange={(e) => {
+                // Find variant with selected color
+                const color = e.target.value;
+                const match = variants.find(v => v.color === color && v.laceSize === selectedLaceSize && v.inchSize === selectedInchSize);
+                if (match) {
+                  setSelectedLaceSize(match.laceSize);
+                  setSelectedInchSize(match.inchSize);
+                }
+              }}
+              className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:border-gold focus:ring-1 focus:ring-gold/20"
+            >
+              <option value="">Select Color</option>
+              {[...new Set(variants.map(v => v.color).filter(Boolean))].map(color => (
+                <option key={color} value={color}>{color}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Style */}
+          <div>
+            <label className="block text-sm font-semibold text-card-foreground mb-1">Style:</label>
+            <select
+              value={selectedVariant?.style || ''}
+              onChange={(e) => {
+                // Find variant with selected style
+                const style = e.target.value;
+                const match = variants.find(v => v.style === style && v.laceSize === selectedLaceSize && v.inchSize === selectedInchSize);
+                if (match) {
+                  setSelectedLaceSize(match.laceSize);
+                  setSelectedInchSize(match.inchSize);
+                }
+              }}
+              className="w-full px-3 py-2 text-sm border border-border rounded-lg focus:border-gold focus:ring-1 focus:ring-gold/20"
+            >
+              <option value="">Select Style</option>
+              {[...new Set(variants.map(v => v.style).filter(Boolean))].map(style => (
+                <option key={style} value={style}>{style}</option>
               ))}
             </select>
           </div>
