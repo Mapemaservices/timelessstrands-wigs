@@ -9,6 +9,9 @@ interface ProductVariant {
   inchSize: string;
   price: number;
   stock: number;
+  density?: string;
+  color?: string;
+  style?: string;
 }
 
 interface ProductCardProps {
@@ -22,6 +25,7 @@ interface ProductCardProps {
   originalPrice?: number;
   hasVideo?: boolean;
   videoLength?: string;
+  category?: string;
   onAddToCart: (product: any) => void;
   onAddToCompare?: (product: any) => void;
 }
@@ -37,6 +41,7 @@ const ProductCard: React.FC<ProductCardProps> = ({
   originalPrice,
   hasVideo = false,
   videoLength,
+  category,
   onAddToCart,
   onAddToCompare
 }) => {
@@ -264,6 +269,9 @@ const ProductCard: React.FC<ProductCardProps> = ({
           <h3 className="text-base sm:text-lg font-bold text-card-foreground group-hover:text-gold transition-colors line-clamp-2 font-poppins mb-1">
             {name}
           </h3>
+          {category && (
+            <div className="text-xs font-semibold text-gold mb-1">Category: {category}</div>
+          )}
           <p className="text-sm text-muted-foreground line-clamp-2">
             {description}
           </p>
@@ -322,6 +330,24 @@ const ProductCard: React.FC<ProductCardProps> = ({
             </select>
           </div>
         </div>
+
+        {/* Show extra variant details if selected */}
+        {selectedVariant && (
+          <div className="space-y-1 pt-2">
+            {selectedVariant.density && (
+              <div className="text-sm text-card-foreground"><strong>Density:</strong> {selectedVariant.density}</div>
+            )}
+            {selectedVariant.color && (
+              <div className="text-sm text-card-foreground"><strong>Color:</strong> {selectedVariant.color}</div>
+            )}
+            {selectedVariant.style && (
+              <div className="text-sm text-card-foreground"><strong>Style:</strong> {selectedVariant.style}</div>
+            )}
+            {selectedVariant.inchSize && (
+              <div className="text-sm text-card-foreground"><strong>Inch Size:</strong> {selectedVariant.inchSize}</div>
+            )}
+          </div>
+        )}
 
         {/* Price */}
         <div className="flex items-center justify-between">

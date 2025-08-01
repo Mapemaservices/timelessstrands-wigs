@@ -94,16 +94,18 @@ const AdminDashboard: React.FC = () => {
   });
 
   const categories = [
-    'closure', 'frontal', 'glueless', 'pixie', 'straight', 'curly', 'wave', 'bob'
+    'Straight', 'Curly', 'Bodywave', 'Bob', 'Braided', 'Bundles', 'Fringe', 'Pixie', 'Kinky Straight', 'Kinky Curly', 'HD Lace', 'Wavy', 'Afro'
   ];
 
   const laceSizes = [
     '4x4 Closure', '5x5 Closure', '6x6 Closure', '13x4 Frontal', '13x6 Frontal', 
     '5x5 Glueless', 'No Lace', '13x4 Lace', '4x4 Lace', '2x6 Lace'
   ];
-  const densities = ['150%', '180%', '200%', '210%', '250%'];
-  const colors = ['Natural Black', '1B', '99J Burgundy', 'Blonde', '350 Ginger', 'P4/27', 'Red', 'Custom'];
-  const styles = ['Straight', 'Bodywave', 'Curly', 'Wavy', 'Kinky', 'Other'];
+  const densities = ['150%', '180%', '200%', '210%', '250%', '280%', '300%', '310%', '350%'];
+  // Remove color list, allow manual input
+  const styles = [
+    'Straight', 'Bodywave', 'Curly', 'Wavy', 'Kinky', 'Jerry Curls', 'Water Curls', 'Deepwave', 'Loose Deep', 'Loose Wave', 'Other'
+  ];
 
   useEffect(() => {
     checkAdminStatus();
@@ -179,6 +181,9 @@ const AdminDashboard: React.FC = () => {
           .map(variant => ({
             laceSize: variant.lace_size,
             inchSize: variant.inch_size,
+            density: variant.density,
+            color: variant.color,
+            style: variant.style,
             price: (variant.price || 0) / 100, // convert cents to KSH
             stock: variant.stock
           }))
@@ -615,23 +620,15 @@ const AdminDashboard: React.FC = () => {
                         </div>
                         <div className="space-y-2">
                           <Label>Color</Label>
-                          <Select
+                          <Input
                             value={variant.color || ''}
-                            onValueChange={(value) => {
+                            onChange={(e) => {
                               const newVariants = [...formData.variants];
-                              newVariants[index].color = value;
+                              newVariants[index].color = e.target.value;
                               setFormData(prev => ({ ...prev, variants: newVariants }));
                             }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select color" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {colors.map(c => (
-                                <SelectItem key={c} value={c}>{c}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
+                            placeholder="Enter color (e.g., 613, Pink, Blue, etc.)"
+                          />
                         </div>
                         <div className="space-y-2">
                           <Label>Style</Label>
@@ -817,13 +814,14 @@ const AdminDashboard: React.FC = () => {
               id={Number(product.id)}
               name={product.name}
               description={product.description || ''}
-              images={[]}
-              variants={[]}
+              images={product.images || []}
+              variants={product.variants || []}
               rating={product.rating || 0}
               reviews={product.reviews || 0}
               originalPrice={undefined}
               hasVideo={product.has_video}
               videoLength={product.video_length}
+              category={product.category}
               onAddToCart={() => {}}
             />
             <div className="absolute top-2 right-2 flex gap-2">

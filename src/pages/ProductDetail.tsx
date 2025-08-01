@@ -9,8 +9,7 @@ import { useQuery } from '@tanstack/react-query';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductReviews from '@/components/ProductReviews';
-import ProductRecommendations from '@/components/ProductRecommendations';
-import CouponSystem from '@/components/CouponSystem';
+// ...existing code...
 import { useWishlist } from '@/components/WishlistProvider';
 import { products, Product } from '@/data/products';
 
@@ -427,15 +426,7 @@ const ProductDetail: React.FC = () => {
           </div>
         </div>
 
-        {/* Coupons Section */}
-        <div className="mt-12">
-          <CouponSystem />
-        </div>
-
-        {/* Recommendations */}
-        <div className="mt-12">
-          <ProductRecommendations currentProductId={parseInt(id || '0')} />
-        </div>
+        {/* Only product details are shown. Coupons and recommendations removed. */}
       </div>
 
       <Footer />
