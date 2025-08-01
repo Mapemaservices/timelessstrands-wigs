@@ -98,8 +98,10 @@ const AdminDashboard: React.FC = () => {
   ];
 
   const laceSizes = [
-    '4x4 Closure', '5x5 Closure', '6x6 Closure', '13x4 Frontal', '13x6 Frontal', 
-    '5x5 Glueless', 'No Lace', '13x4 Lace', '4x4 Lace', '2x6 Lace'
+    '4x4 Closure', '5x5 Closure', '6x6 Closure', '13x4 Frontal', '13x6 Frontal',
+    '5x5 Glueless', 'No Lace', '13x4 Lace', '4x4 Lace', '2x6 Lace',
+    '5x5', '6x6', '13x4', '13x6', 'T-Part', 'C-Part', 'U-Part', 'V-Part', '360 Lace', 'Full Lace',
+    '2x4', '7x7', '13x1', '12x6', '14x6', '15x6', '13x7', '13x8', '8x8', '9x9'
   ];
   const densities = ['150%', '180%', '200%', '210%', '250%', '280%', '300%', '310%', '350%'];
   // Remove color list, allow manual input

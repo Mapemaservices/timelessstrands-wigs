@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
 import { Filter, SlidersHorizontal, Grid3X3, LayoutGrid } from 'lucide-react';
-import { products } from '@/data/products';
+// Removed hardcoded products import
 import { supabase } from '@/integrations/supabase/client';
 
 interface CartItem {
@@ -116,8 +116,8 @@ const ProductListing: React.FC<ProductListingProps> = ({ onUpdateCart }) => {
     onUpdateCart(newCartItems);
   };
 
-  const allProducts = [...products, ...dbProducts];
-  const filteredProducts = allProducts.filter(product => {
+  // Only use products fetched from Supabase
+  const filteredProducts = dbProducts.filter(product => {
     if (filterCategory === 'all') return true;
     return product.category === filterCategory;
   });
